@@ -9,8 +9,8 @@
 
 #include <ESP8266WiFi.h>
 
-const char* ssid = "TpLinkMK";
-const char* password = "M01z_BTS";
+const char* ssid = "";
+const char* password = "";
 
 int RedLED = 0;
 int GreenLED = 2;
