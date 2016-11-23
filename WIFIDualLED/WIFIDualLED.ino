@@ -15,9 +15,6 @@ const char* password = "";
 int RedLED = 0;
 int GreenLED = 2;
 
-float sinVal;
-int toneVal;
-
 String buildStatus;
 
 // Create an instance of the server
@@ -59,14 +56,6 @@ void setup() {
 }
 
 void loop() {
-  if(buildStatus == "failure")
-  {
-    alarm();  
-  }else {
-    noTone(RedLED);
-    digitalWrite(RedLED, 0);
-    digitalWrite(GreenLED, 1);
-  }
   
   // Check if a client has connected
   WiFiClient client = server.available();
@@ -91,6 +80,10 @@ void loop() {
     buildStatus = "success";
   else if (req.indexOf("/buildStatus/failure") != -1)
     buildStatus = "failure";
+  else if (req.indexOf("/buildStatus/high") != -1)
+    buildStatus = "high";
+  else if (req.indexOf("/buildStatus/low") != -1)
+    buildStatus = "low";
   else {
     Serial.println("invalid request -" + req);
     client.stop();
@@ -105,7 +98,14 @@ void loop() {
   }else if(buildStatus == "failure") {
     digitalWrite(RedLED, 1);
     digitalWrite(GreenLED, 0);
-  }else {
+  }else if(buildStatus == "low") {
+    digitalWrite(RedLED, 0);
+    digitalWrite(GreenLED, 0);
+  }else if(buildStatus == "high") {
+    digitalWrite(RedLED, 1);
+    digitalWrite(GreenLED, 1);
+  }
+  else {
     Serial.println("invalid request -" + req);
   }
   client.flush();
@@ -123,20 +123,5 @@ void loop() {
     
   // The client will actually be disconnected 
   // when the function returns and 'client' object is detroyed
-}
-
-void alarm(){
-   //digitalWrite(RedLED, 0);
-   delay(100);
-   //digitalWrite(RedLED, 1);
-   delay(100);
-   
-   for (int x=0; x<100; x++) {
-    // convert degrees to radians then obtain sin value
-    sinVal = (sin(x*(3.1412/180)));
-    // generate a frequency from the sin value
-    toneVal = 2000+(int(sinVal*1000));
-    tone(RedLED, toneVal);
-  }
 }
 
